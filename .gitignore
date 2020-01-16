@@ -1,0 +1,6 @@
+*.pyc
+private/
+src/.ipynb_checkpoints
+*-checkpoint.ipynb
+logs/
+*.log

@@ -1,0 +1,15 @@
+indexes:
+
+- kind: tweets
+  properties:
+  - name: processed
+    direction: asc
+  - name: timestamp
+    direction: desc
+
+- kind: users
+  properties:
+  - name: friends
+    direction: asc
+  - name: cnts
+    direction: desc
