@@ -94,7 +94,7 @@ if __name__ == '__main__':
     for ind, line in enumerate(f):
       configs.append(json.loads(line)) 
   config = configs[args.credential]
-  with open("../data/trump.csv", "r") as r:
+  with open("../data/candidates.csv", "r") as r:
     df = pd.read_csv(r)
   usernames = [u[1:] for u in df['twitter handle'].values]
  

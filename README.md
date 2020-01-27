@@ -55,3 +55,10 @@ Andrew Yang,@AndrewYang,democratic
 Joe Walsh,@WalshFreedom,republican
 William F. Weld,@GovBillWeld,republican
 + Donald Trump
+
+The data collection stopped at 2019-01-23 (21:26:47.000) CET
+
+It started on 2019-01-27 again
+Without Donald Trump
+
+
