@@ -72,7 +72,7 @@ class StreamListener(tweepy.StreamListener):
     if status_code == 420:
       logging.error("Hit Rate Limit")
       time.sleep(backoff_counter)
-      backoff_count *= 2
+      backoff_counter *= 2
       return False
 
 if __name__ == '__main__':
