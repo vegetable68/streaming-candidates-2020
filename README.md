@@ -63,3 +63,9 @@ Without Donald Trump
 
 Stopped again at 2020-02-01 (01:05:00.000) CET	
 started again at 2020-02-03 08:54:26 CET
+
+Stopped again at 2020-02-04 (21:27:53.000) CET
+started again at 2020-02-07 11:09:12 CET
+
+Stopped again at 2020-02-20 (04:21:21.000) CET	
+started again at 2020-02-21 11:37:05 CET

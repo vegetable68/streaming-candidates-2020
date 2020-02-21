@@ -57,24 +57,23 @@ class StreamListener(tweepy.StreamListener):
         return False
     else:
       # Standard tweet data  
-      # Candidate posts / reply to candidates
-      #try:
-      updator.update_tweet(data)
-      #except: 
-      # Unknown data type
-      #  logging.error("Unknown message type: " + str(raw_data))
-      #  return False
+      # Candidate posts / reply to candidates / mention of candidates
+      try:
+        updator.update_tweet(data)
+      except: 
+        # Unknown data type
+        logging.error("Unknown message type: " + str(raw_data))
 
   def on_status(self, status):
     logging.info(status.text)
   
   def on_error(self, status_code):
-    return False
-    #if status_code == 420:
-    #  logging.error("Hit Rate Limit")
-    #  time.sleep(backoff_counter)
-    #  backoff_counter *= 2
-    #  return False
+    # TODO(yiqing): what are other status codes to add
+    if status_code == 420:
+      logging.error("Hit Rate Limit")
+      time.sleep(backoff_counter)
+      backoff_counter *= 2
+      return False
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -132,14 +131,10 @@ if __name__ == '__main__':
   stream_listener = StreamListener()
   stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
   updator = TwitterUpdates('yiqing-2020-twitter')
-  backoff_counter = 60 * 15
+  backoff_counter = 60
   while True:
     try:
-      stream.filter(follow=userids, #track=track_mentions,
-              stall_warnings=True)
+      stream.filter(follow=userids, track=track_mentions, stall_warnings=True)
     except:
-      logging.error("Hit Rate Limit")
-      time.sleep(60*15)
-      logging.info("Reconnect")
       continue
 

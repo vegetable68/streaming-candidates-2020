@@ -4,7 +4,7 @@ import datetime
 import logging
 from update import TwitterUpdates
 
-TESTFILE = "../data/test.json"
+TESTFILE = "test"
 
 def update(raw_data, updator):
   data = json.loads(raw_data)
@@ -48,9 +48,10 @@ def update(raw_data, updator):
       return False
   else:
     updator.update_tweet(data)
+    print("Updated")
 
 if __name__ == '__main__':
-  updator = TwitterUpdates("yiqing-twitter-harassment")
+  updator = TwitterUpdates("yiqing-2020-twitter")
   logging.basicConfig(level=logging.DEBUG)
   logging.debug("Test Start")
   with open(TESTFILE, "r") as f:
