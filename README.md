@@ -69,3 +69,6 @@ started again at 2020-02-07 11:09:12 CET
 
 Stopped again at 2020-02-20 (04:21:21.000) CET	
 started again at 2020-02-21 11:37:05 CET
+
+stopped again at 2020-02-21 (20:45:12.000) CET	
+started at  2020-02-22 14:15:26

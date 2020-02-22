@@ -127,8 +127,7 @@ if __name__ == '__main__':
     with open('../data/candidates-{}'.format(args.handles), "w") as w:
       json.dump(candidates, w)
   
-  time = datetime.datetime.now()
-  logging.info("Start streaming at {}".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+  logging.info("Start streaming at {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
   stream_listener = StreamListener()
   stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
   updator = TwitterUpdates('yiqing-2020-twitter')

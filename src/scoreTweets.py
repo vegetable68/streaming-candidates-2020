@@ -4,7 +4,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from nltk import TweetTokenizer
 import logging
 
-PROJECT = "yiqing-twitter-candidates"
+PROJECT = "yiqing-2020-twitter"
 CREDENTIAL = "../private/perspective"
 BATCHSIZE = 100
 ATTRIBUTES = ['TOXICITY', 'SEVERE_TOXICITY', 'IDENTITY_ATTACK', 'INSULT',
