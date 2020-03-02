@@ -72,3 +72,7 @@ started again at 2020-02-21 11:37:05 CET
 
 stopped again at 2020-02-21 (20:45:12.000) CET	
 started at  2020-02-22 14:15:26
+
+[Data before this was not tracking Joe Biden's active account]
+stopped at 2020-03-01 (11:19:51.000) CET
+started at 2020-03-02 12:46:27

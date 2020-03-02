@@ -139,6 +139,14 @@ if __name__ == '__main__':
     except:
       logging.error("Hit Rate Limit")
       time.sleep(60*15)
+
+      auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
+      auth.set_access_token(config['access_token'], config['access_token_secret'])
+      api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+      stream_listener = StreamListener()
+      stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
+
       logging.info("Reconnect")
       continue
 
