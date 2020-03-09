@@ -11,10 +11,16 @@ import socket
 import re
 import smtplib
 import pandas as pd
+
 from update import TwitterUpdates
 
 TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y"
 LOGS_DIR = "../logs/"
+
+EMAIL = "../private/email"
+
+with open(EMAIL, "r") as f:
+  email = json.load(f)
 
 class StreamListener(tweepy.StreamListener):
 
@@ -138,7 +144,29 @@ if __name__ == '__main__':
               stall_warnings=True)
     except:
       logging.error("Hit Rate Limit")
-      time.sleep(60*15)
+      time = datetime.datetime.now()
+      Email = {'TO':email['to'], 'FROM':email['user'],
+               'SUBJECT':'Hit Rate limit',
+               'BODY':'hit rate limit at {}, retry in {} seconds.'.format(backoff_counter,
+                   time.strftime("%Y-%m-%d %H:%M:%S"))}
+
+      thisHost = socket.gethostname()
+      thisIP = socket.gethostbyname(thisHost)
+
+      Email['SUBJECT'] += logName
+      Email['SUBJECT'] = Header(Email['SUBJECT'], "utf-8")
+
+      Email['ALL'] = 'From: %s\nTo: %s\nSubject: %s\n\n%s' % (Email['FROM'], Email['TO'],
+              Email['SUBJECT'], Email['BODY'])
+      server = smtplib.SMTP_SSL(email['server'])
+      server.connect(email['server'], 465)
+      server.ehlo()
+      server.login(email['user'], email['password'])
+      server.sendmail(Email['FROM'], Email['TO'], Email['ALL'])
+      server.quit()
+
+      time.sleep(backoff_counter)
+      backoff_counter *= 2
 
       auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
       auth.set_access_token(config['access_token'], config['access_token_secret'])
