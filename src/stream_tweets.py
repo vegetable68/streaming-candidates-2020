@@ -153,8 +153,6 @@ if __name__ == '__main__':
       thisHost = socket.gethostname()
       thisIP = socket.gethostbyname(thisHost)
 
-      Email['SUBJECT'] += logName
-      Email['SUBJECT'] = Header(Email['SUBJECT'], "utf-8")
 
       Email['ALL'] = 'From: %s\nTo: %s\nSubject: %s\n\n%s' % (Email['FROM'], Email['TO'],
               Email['SUBJECT'], Email['BODY'])
