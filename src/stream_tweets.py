@@ -157,8 +157,9 @@ if __name__ == '__main__':
       Email['ALL'] = 'From: %s\nTo: %s\nSubject: %s\n\n%s' % (Email['FROM'], Email['TO'],
               Email['SUBJECT'], Email['BODY'])
       server = smtplib.SMTP_SSL(email['server'])
-      server.connect(email['server'], 465)
-      server.ehlo()
+      #server.starttls()
+      #server.connect(email['server'], 465)
+      #server.ehlo()
       server.login(email['user'], email['password'])
       server.sendmail(Email['FROM'], Email['TO'], Email['ALL'])
       server.quit()
