@@ -144,11 +144,11 @@ if __name__ == '__main__':
               stall_warnings=True)
     except:
       logging.error("Hit Rate Limit")
-      time = datetime.datetime.now()
+      curtime = datetime.datetime.now()
       Email = {'TO':email['to'], 'FROM':email['user'],
                'SUBJECT':'Hit Rate limit',
                'BODY':'hit rate limit at {}, retry in {} seconds.'.format(backoff_counter,
-                   time.strftime("%Y-%m-%d %H:%M:%S"))}
+                   curtime.strftime("%Y-%m-%d %H:%M:%S"))}
 
       thisHost = socket.gethostname()
       thisIP = socket.gethostbyname(thisHost)
