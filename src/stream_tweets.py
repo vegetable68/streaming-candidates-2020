@@ -138,6 +138,7 @@ if __name__ == '__main__':
   stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
   updator = TwitterUpdates('yiqing-2020-twitter')
   backoff_counter = 60 * 15
+  lasttime = None
   while True:
     try:
       stream.filter(follow=userids, #track=track_mentions,
@@ -145,10 +146,13 @@ if __name__ == '__main__':
     except:
       logging.error("Hit Rate Limit")
       curtime = datetime.datetime.now()
+      if lasttime and (curtime - lasttime).total_seconds() < backoff_counter*2:
+        backoff_counter *= 2
+      lasttime = curtime
       Email = {'TO':email['to'], 'FROM':email['user'],
                'SUBJECT':'Hit Rate limit',
-               'BODY':'hit rate limit at {}, retry in {} seconds.'.format(backoff_counter,
-                   curtime.strftime("%Y-%m-%d %H:%M:%S"))}
+               'BODY':'hit rate limit at {}, retry in {} seconds.'.format(
+                   curtime.strftime("%Y-%m-%d %H:%M:%S"), backoff_counter)}
 
       thisHost = socket.gethostname()
       thisIP = socket.gethostbyname(thisHost)
@@ -165,7 +169,6 @@ if __name__ == '__main__':
       server.quit()
 
       time.sleep(backoff_counter)
-      backoff_counter *= 2
 
       auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
       auth.set_access_token(config['access_token'], config['access_token_secret'])
