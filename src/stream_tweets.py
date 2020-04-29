@@ -148,6 +148,8 @@ if __name__ == '__main__':
       curtime = datetime.datetime.now()
       if lasttime and (curtime - lasttime).total_seconds() < backoff_counter*2:
         backoff_counter *= 2
+      else:
+        backoff_counter = 60 * 15
       lasttime = curtime
       Email = {'TO':email['to'], 'FROM':email['user'],
                'SUBJECT':'Hit Rate limit',
