@@ -11,5 +11,15 @@ indexes:
   properties:
   - name: friends
     direction: asc
-  - name: cnts
+  - name: tweet 
+    direction: desc
+  - name: retweet 
+    direction: desc
+  - name: Republican_retweet 
+    direction: desc
+  - name: Democratic_retweet 
+    direction: desc
+  - name: Republican_tweet 
+    direction: desc
+  - name: Democratic_tweet 
     direction: desc
