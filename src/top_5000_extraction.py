@@ -17,6 +17,9 @@ PROJECT = "yiqing-2020-twitter"
 CREDENTIALS = "../private/credentials"
 LOGINTERVAL = 10
 LOGS_DIR = "../logs/"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/yiqing/credentials/service_account.json"
+
+
 
 fields = ['Democratic_retweet', 'Republican_retweet', 'Democratic_tweet', 'Republican_tweet', 'retweet', 'tweet']
 

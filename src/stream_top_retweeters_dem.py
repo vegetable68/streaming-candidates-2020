@@ -12,7 +12,7 @@ import re
 import smtplib
 import pandas as pd
 
-from update import TwitterUpdates
+from update_retweeter import TwitterUpdates
 from tendo import singleton
 
 me = singleton.SingleInstance()
@@ -38,10 +38,10 @@ class StreamListener(tweepy.StreamListener):
         deletion_user = data['delete']['status']['user_id'] 
       except:
         logging.error("Missing Fields in deletion " + str(raw_data))
-      try:
-        updator.update_deletion(deleted_id, deletion_user)
-      except:
-        logging.error("Deletion Error for tweet {} by user {}".format(deleted_id, deletion_user))
+      #try:
+      #  updator.update_deletion(deleted_id, deletion_user)
+      #except:
+      #  logging.error("Deletion Error for tweet {} by user {}".format(deleted_id, deletion_user))
     elif 'retweeted_status' in data:
       # Retweet of other tweets 
       try:
@@ -49,7 +49,7 @@ class StreamListener(tweepy.StreamListener):
         retweet_user = data['user']
       except:
         logging.error("Missing Fields in retweet " + str(raw_data)) 
-      updator.update_retweet(retweeted_id, data)
+      updator.update_retweet(retweeted_id, data, party)
     elif 'limit' in data:
       logging.error("Rate Limit Notice: " + str(raw_data))
       # Limit notices
@@ -69,7 +69,7 @@ class StreamListener(tweepy.StreamListener):
       # Standard tweet data  
       # Candidate posts / reply to candidates
       #try:
-      updator.update_tweet(data)
+      updator.update_tweet(data, party)
       #except: 
       # Unknown data type
       #  logging.error("Unknown message type: " + str(raw_data))
@@ -123,7 +123,7 @@ if __name__ == '__main__':
   logging.info("Start streaming at {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
   stream_listener = StreamListener()
   stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-  updator = TwitterUpdates('top-retweeters-stream', service_account='/home/yiqing/credentials/top_retweeters_stream.json')
+  updator = TwitterUpdates('yiqing-twitter-candidates', service_account='/home/yiqing/credentials/yiqing-twitter-candidates.json')
   backoff_counter = 60 * 15
   lasttime = None
   while True:
