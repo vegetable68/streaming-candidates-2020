@@ -76,6 +76,6 @@ if __name__ == '__main__':
   with open("/home/yiqing/candidates-on-twitter/data/top_5000_rep.json", "w") as w:
     json.dump(rep, w)
 
-  os.system("gsutil cp /home/yiqing/candidates-on-twitter/data/top_5000_{}.json gs://twitter_2020_top_retweeters_week/records/".format(timestamp)) 
+  os.system("gsutil cp /home/yiqing/candidates-on-twitter/data/top_5000_{}.json gs://twitter_2020_top_retweeters/records/".format(timestamp)) 
   os.system("rm /home/yiqing/candidates-on-twitter/data/top_5000_{}.json".format(timestamp)) 
   logging.info("extracted on {}".format(timestamp))
