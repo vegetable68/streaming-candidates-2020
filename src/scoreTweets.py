@@ -5,22 +5,22 @@ from nltk import TweetTokenizer
 import logging
 
 PROJECT = "yiqing-2020-twitter"
-CREDENTIAL = "../private/perspective"
+CREDENTIAL = "/home/yiqing/candidates-on-twitter/private/perspective"
 BATCHSIZE = 100
 ATTRIBUTES = ['TOXICITY', 'SEVERE_TOXICITY', 'IDENTITY_ATTACK', 'INSULT',
 'PROFANITY', 'THREAT', 'SEXUALLY_EXPLICIT', 'FLIRTATION',
 'INFLAMMATORY', 'OBSCENE'] # NYT based data
 
 class tweetScorer:
-  def __init__(self, project_id): 
+  def __init__(self, service_account): 
     # Connect to database
-    self.client = datastore.Client(project_id)
+    self.client = datastore.Client.from_service_account_json(service_account)
     self.TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y" 
-    logging.info("Database {} created.".format(project_id))
+    logging.info("Database {} created.".format(self.client.project))
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-  scorer = tweetScorer(PROJECT) 
+  scorer = tweetScorer("/home/yiqing/credentials/service_account.json") 
   with open(CREDENTIAL, "r") as f:
     for line in f:
       PERSPECTIVE_KEY = line
