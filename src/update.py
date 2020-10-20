@@ -88,7 +88,7 @@ class TwitterUpdates:
     else:
       self.update_value(deleted_id, 'tweets', 'deleted', True, 'set')
   
-  def update_retweet(self, retweeted_id, data, partyInfo = None): 
+  def update_retweet(self, retweeted_id, data): 
     # Note that the tweet being retweeted may not necessarily exist
     # in the database yet.
     ret = {}
@@ -100,10 +100,6 @@ class TwitterUpdates:
     ret['user'] = data['user']['id']
     ret['retweeted'] = data['retweeted_status']['id']
     ret['retweetedFrom_user'] = data['retweeted_status']['user']['id']
-    if partyInfo and str(ret['retweetedFrom_user']) in partyInfo:
-      self.update_user(data['user']['id'], 'retweet', data['user'], partyInfo[str(ret['retweetedFrom_user'])])
-    else:
-      self.update_user(data['user']['id'], 'retweet', data['user'])
     self.write_record(ret, 'retweets')
 
   def update_hashtags(self, tweet_id, hashtags):
@@ -135,12 +131,10 @@ class TwitterUpdates:
       ret['mention'] = mention 
       self.write_record(ret, 'mentions')
     
-  def update_user(self, user_id, action, user_info, partyInfo=None):
+  def update_user(self, user_id, action, user_info):
     ret = {}
     if self.existed(user_id, 'users'):
       self.update_value(user_id, 'users', action, 1, 'inc')
-      if partyInfo:
-        self.update_value(user_id, 'users', '{}_{}'.format(partyInfo, action), 1, 'inc')
       return
     if user_info:
       ret['_id'] = user_id
@@ -152,18 +146,11 @@ class TwitterUpdates:
       ret['created_at'] = datetime.datetime.strptime(user_info['created_at'], self.TIMEFORMAT)
     else:
       ret['_id'] = user_id 
-    for entry in ['tweet', 'retweet']:
-      ret[entry]=0
-      for party in ['Republican', 'Democratic']:
-        ret['{}_{}'.format(party, entry)] = 0
-    ret[action] += 1
-    if partyInfo:
-      ret['{}_{}'.format(partyInfo, action)] += 1
     ret['friends'] = None
     ret['followed_cnts'] = 0
     self.write_record(ret, 'users')
 
-  def update_tweet(self, data, partyInfo=None):
+  def update_tweet(self, data):
     ret = {}
     if self.existed(data['id'], 'tweets'): return
     ret['isDeleted'] = False
@@ -176,10 +163,6 @@ class TwitterUpdates:
     ret['replyTo_user'] = data['in_reply_to_user_id'] if self.existedField('in_reply_to_user_id', data) else None 
     ret['user'] = data['user']['id']
     ret['processed'] = False
-    if partyInfo and str(ret['replyTo_user']) in partyInfo:
-      self.update_user(ret['user'], 'tweet', data['user'], partyInfo[str(ret['replyTo_user'])])
-    else:
-      self.update_user(ret['user'], 'tweet', data['user'])
     ret['coordinates'] = data['coordinates']['coordinates'] if self.existedField('coordinates', data) else None
     ret['place'] = data['place']['id'] if self.existedField('place', data) else None
     if ret['place'] is not None:

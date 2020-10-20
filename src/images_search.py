@@ -15,9 +15,13 @@ import smtplib
 from tendo import singleton
 
 me = singleton.SingleInstance()
-PROJECT = "yiqing-2020-twitter"
+# Use abslute path here
+PROJECT = "[YOUR GCP CLOUD PROJECT]"
 LOGINTERVAL = 10
-service_account = "/home/yiqing/credentials/service_account.json"
+service_account = "[YOUR GCP SERVICE ACCOUNT]"
+TMPDIR = "[TMP DIR]"
+BUCKET = "[CLOUD BUCKET FOR IMAGES]"
+UPLOADED_IMAGES = "[A FILE OF UPLOADEDE IMAGES]" # to check if the uploading was successful, compare this file with the images stored in cloud bucket
 
 class imageSearch:
 
@@ -38,30 +42,23 @@ class imageSearch:
     for cnts, image in enumerate(imagelist):
       total = 0
       imageId = image.id
-      #if imageId in uploaded:
-      #  image['type'] = 'photo-fetched'
-      #  self.client.put(image)
-      #  continue
       imageUrl = image['media_url']
-      cmd = "wget -O /home/yiqing/tmp/{}.jpg {}".format(image.id, image['media_url'])
+      cmd = "wget -O {}{}.jpg {}".format(TMPDIR, image.id, image['media_url'])
       rt = os.system(cmd)
-      size = os.path.getsize('/home/yiqing/tmp/{}.jpg'.format(image.id))
+      size = os.path.getsize('{}{}.jpg'.format(TMPDIR, image.id))
       if size == 0:
-        os.system('rm /home/yiqing/tmp/{}.jpg'.format(image.id))
-      #else:
-      #  rt = os.system("gsutil cp /home/yiqing/tmp/{}.jpg gs://yiqing-2020-twitter-images/".format(image.id))
-      #  os.system("rm /home/yiqing/tmp/{}".format(image.id))
+        os.system('rm {}{}.jpg'.format(TMPDIR, image.id))
       fetched_images.append(image)
 
-    rt = os.system("gsutil cp /home/yiqing/tmp/* gs://yiqing-2020-twitter-images/".format(image.id))
-    os.system("rm /home/yiqing/tmp/*".format(image.id))
+    rt = os.system("gsutil cp {}* gs://{}/".format(TMPDIR, BUCKET))
+    os.system("rm {}*".format(TMPDIR))
     if rt:
       return cnts
 
     for image in fetched_images:
       image['type'] = 'photo-fetched'
       self.client.put(image)
-      with open("/home/yiqing/uploaded_images", "a") as w:
+      with open("{}".format(UPLOADED_IMAGES), "a") as w:
         w.write(json.dumps(image.id) + '\n')
 
     return cnts
@@ -70,10 +67,6 @@ if __name__ == '__main__':
   logDate = datetime.datetime.now()
   logging.basicConfig(level=logging.INFO)
 
-  #uploaded = set()
-  #with open("/home/yiqing/uploaded_images" , "r") as r:
-  #  for line in r:
-  #    uploaded.add(json.loads(line))
   searcher = imageSearch(service_account)
   searchCnts = searcher.search()
   increment = searchCnts

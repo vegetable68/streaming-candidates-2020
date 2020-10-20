@@ -16,15 +16,13 @@ from update import TwitterUpdates
 from tendo import singleton
 
 me = singleton.SingleInstance()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/yiqing/credentials/service_account.json"
+# Use absolute path here
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="[YOUR SERVICE ACCOUNT JSON FILE]"
+CREDENTIALS = "[YOUR TWITTER DEVELOPER API CREDENTIAL FILE]"
+KEYWORDS_PATH = "[PATH TO KEYWORDS]"
+PROJECT = "[YOUR GOOGLE CLOUD PROJECT]"
 
 TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y"
-LOGS_DIR = "../logs/"
-
-EMAIL = "/home/yiqing/candidates-on-twitter/private/email"
-
-with open(EMAIL, "r") as f:
-  email = json.load(f)
 
 class StreamListener(tweepy.StreamListener):
 
@@ -90,12 +88,8 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
 
   logDate = datetime.datetime.now()
-  if not os.path.exists(LOGS_DIR):
-    os.mkdir(LOGS_DIR)
-
   logging.basicConfig(level=logging.INFO)
   logging.info('Register Crendentials')
-  CREDENTIALS = "/home/yiqing/candidates-on-twitter/private/credentials"
   
   configs = []
   with open(CREDENTIALS) as f:
@@ -103,91 +97,22 @@ if __name__ == '__main__':
       configs.append(json.loads(line)) 
   credential = 0
   config = configs[credential]
-  with open("/home/yiqing/candidates-on-twitter/data/candidates-twitter-2020.csv", "r") as r:
-    df = pd.read_csv(r)
-  usernames = [u for u in df['handle'].values]
  
   # Configure API
   auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
   auth.set_access_token(config['access_token'], config['access_token_secret'])
   api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-  userids = []
-  candidates = [] 
-  if os.path.exists("/home/yiqing/candidates-on-twitter/data/candidates"):
-    with open('/home/yiqing/candidates-on-twitter/data/candidates', "r") as r:
-      candidates = json.load(r)
-    for candidate in candidates:
-      userids.append(str(candidate['id'])) 
-  else:
-    for username in usernames:
-      try:
-        user = api.get_user(username)._json
-        candidate = {"handle": username}
-        for attr in ['name', 'protected', 'followers_count', 'friends_count', 'verified', 'id']:
-          candidate[attr] = user[attr]
-        for attr in ['location', 'url', 'description']:
-          candidate[attr] = user[attr] if attr in user else None
-        candidate['created_at'] = datetime.datetime.strptime(user['created_at'], TIMEFORMAT).strftime("%Y-%m-%d %H:%M:%S")
-        candidates.append(candidate)
-        userids.append(user['id_str'])
-      except:
-        logging.error(username)
-        pass
-    with open('/home/yiqing/candidates-on-twitter/data/candidates', "w") as w:
-      json.dump(candidates, w)
-
-  with open("/home/yiqing/candidates-on-twitter/data/partyInfo", "r") as r:
-    partyInfo = json.load(r)
+  keywords = []
+  with open(KEYWORDS_PATH, "r") as r:
+    for line in r:
+      keywords.append(line.strip())
   
   logging.info("Start streaming at {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
   stream_listener = StreamListener()
   stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-  updator = TwitterUpdates('yiqing-2020-twitter')
-  backoff_counter = 60 * 15
+  updator = TwitterUpdates(PROJECT)
   lasttime = None
   while True:
-    #try:
-      stream.filter(follow=userids,
-              stall_warnings=True)
-    #except:
-    #  logging.error("Hit Rate Limit")
-    #  curtime = datetime.datetime.now()
-    #  logging.errorr('hit rate limit at {}, retry in {} seconds.'.format(
-    #               curtime.strftime("%Y-%m-%d %H:%M:%S"), backoff_counter))
-    #  if lasttime and (curtime - lasttime).total_seconds() < backoff_counter*2:
-    #    backoff_counter *= 2
-    #  else:
-    #    backoff_counter = 60 * 15
-    #  lasttime = curtime
-    #  Email = {'TO':email['to'], 'FROM':email['user'],
-    #           'SUBJECT':'Hit Rate limit',
-    #           'BODY':'hit rate limit at {}, retry in {} seconds.'.format(
-    #               curtime.strftime("%Y-%m-%d %H:%M:%S"), backoff_counter)}
-
-    #  thisHost = socket.gethostname()
-    #  thisIP = socket.gethostbyname(thisHost)
-
-
-    #  Email['ALL'] = 'From: %s\nTo: %s\nSubject: %s\n\n%s' % (Email['FROM'], Email['TO'],
-    #          Email['SUBJECT'], Email['BODY'])
-    #  server = smtplib.SMTP_SSL(email['server'])
-    #  #server.starttls()
-    #  #server.connect(email['server'], 465)
-    #  #server.ehlo()
-    #  server.login(email['user'], email['password'])
-    #  server.sendmail(Email['FROM'], Email['TO'], Email['ALL'])
-    #  server.quit()
-
-    #  #time.sleep(backoff_counter)
-
-    #  #auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
-    #  #auth.set_access_token(config['access_token'], config['access_token_secret'])
-    #  #api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
-    #  #stream_listener = StreamListener()
-    #  #stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-
-    #  logging.info("Reconnect")
-    #  break
+      stream.filter(track=keywords,stall_warnings=True)
   logging.errorr('error at {}.'.format(curtime.strftime("%Y-%m-%d %H:%M:%S")))
 
