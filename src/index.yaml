@@ -6,6 +6,8 @@ indexes:
     direction: asc
   - name: timestamp
     direction: desc
+  - name: retweet_count
+    direction: desc
 
 - kind: users
   properties:
