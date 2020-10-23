@@ -18,7 +18,7 @@ class TwitterUpdates:
     self.TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y" 
     self.cnts = 0
     self.buffer = []
-    self.THERESHOLD = 450
+    self.THERESHOLD = 100
     self.inBuffer = defaultdict(dict)
     logging.info("Database {} created.".format(self.client.project))
 
@@ -102,6 +102,10 @@ class TwitterUpdates:
     ret['retweetedFrom_user'] = data['retweeted_status']['user']['id']
     self.write_record(ret, 'retweets')
 
+
+    # Update the retweeted tweet in our db
+    self.update_tweet(data['retweeted_status'])
+
   def update_hashtags(self, tweet_id, hashtags):
     for hashtag in hashtags:
       ret = {}
@@ -163,6 +167,7 @@ class TwitterUpdates:
     ret['replyTo_user'] = data['in_reply_to_user_id'] if self.existedField('in_reply_to_user_id', data) else None 
     ret['user'] = data['user']['id']
     ret['processed'] = False
+    ret['retweet_count'] = data['retweet_count']
     ret['coordinates'] = data['coordinates']['coordinates'] if self.existedField('coordinates', data) else None
     ret['place'] = data['place']['id'] if self.existedField('place', data) else None
     if ret['place'] is not None:
@@ -181,6 +186,7 @@ class TwitterUpdates:
               self.existedField('entities', data['extended_tweets']) and
               self.existedField('media', data['extended_tweets']['entities'])) else [])
            + extended_media) 
+    ret['hasMedia'] = len(ret['media']) > 0
     self.update_media(ret['_id'], ret['media'])
     ret['media'] = [media[0] for media in ret['media']]
     ret['urls'] = ([url['expanded_url'] for url in data['entities']['urls']] 
