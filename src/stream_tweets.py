@@ -44,7 +44,6 @@ class StreamListener(tweepy.StreamListener):
       # Retweet of other tweets 
       try:
         retweeted_id = data['retweeted_status']['id']
-        retweet_user = data['user']
       except:
         logging.error("Missing Fields in retweet " + str(raw_data)) 
       updator.update_retweet(retweeted_id, data)
@@ -114,5 +113,5 @@ if __name__ == '__main__':
   lasttime = None
   while True:
       stream.filter(track=keywords,stall_warnings=True)
-  logging.errorr('error at {}.'.format(curtime.strftime("%Y-%m-%d %H:%M:%S")))
+  logging.error('error at {}.'.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
