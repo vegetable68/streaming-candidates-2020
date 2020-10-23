@@ -11,23 +11,24 @@ import traceback
 import socket
 import re
 import smtplib
+from dotenv import load_dotenv
+load_dotenv()
 
 from tendo import singleton
 
 me = singleton.SingleInstance()
 # Use abslute path here
-PROJECT = "[YOUR GCP CLOUD PROJECT]"
+PROJECT = os.getenv("GCP_PROJECT")
 LOGINTERVAL = 10
-service_account = "[YOUR GCP SERVICE ACCOUNT]"
-TMPDIR = "[TMP DIR]"
-BUCKET = "[CLOUD BUCKET FOR IMAGES]"
-UPLOADED_IMAGES = "[A FILE OF UPLOADEDE IMAGES]" # to check if the uploading was successful, compare this file with the images stored in cloud bucket
+TMPDIR = os.getenv("IMAGES_TMP_DIR")
+BUCKET = os.getenv("GCP_BUCKET")
+UPLOADED_IMAGES = os.getenv("IMAGES_UPLOADED_FILE") # to check if the uploading was successful, compare this file with the images stored in cloud bucket
 
 class imageSearch:
 
-  def __init__(self, service_account): 
+  def __init__(self): 
     # Connect to database
-    self.client = datastore.Client.from_service_account_json(service_account)
+    self.client = datastore.Client()
     self.TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y" 
     self.buffer = []
     self.THERESHOLD = 50
@@ -50,16 +51,19 @@ class imageSearch:
         os.system('rm {}{}.jpg'.format(TMPDIR, image.id))
       fetched_images.append(image)
 
-    rt = os.system("gsutil cp {}* gs://{}/".format(TMPDIR, BUCKET))
-    os.system("rm {}*".format(TMPDIR))
-    if rt:
-      return cnts
+    if len(imagelist) == 0:
+      logging.info("No images fetched from the datastore")
+    else:
+      rt = os.system("gsutil cp {}* gs://{}/".format(TMPDIR, BUCKET))
+      os.system("rm {}*".format(TMPDIR))
+      if rt:
+        return cnts
 
-    for image in fetched_images:
-      image['type'] = 'photo-fetched'
-      self.client.put(image)
-      with open("{}".format(UPLOADED_IMAGES), "a") as w:
-        w.write(json.dumps(image.id) + '\n')
+      for image in fetched_images:
+        image['type'] = 'photo-fetched'
+        self.client.put(image)
+        with open("{}".format(UPLOADED_IMAGES), "a") as w:
+          w.write(json.dumps(image.id) + '\n')
 
     return cnts
   
@@ -67,7 +71,7 @@ if __name__ == '__main__':
   logDate = datetime.datetime.now()
   logging.basicConfig(level=logging.INFO)
 
-  searcher = imageSearch(service_account)
+  searcher = imageSearch()
   searchCnts = searcher.search()
   increment = searchCnts
 

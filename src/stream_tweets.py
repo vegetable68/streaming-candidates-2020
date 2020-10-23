@@ -11,16 +11,16 @@ import socket
 import re
 import smtplib
 import pandas as pd
-
 from update import TwitterUpdates
 from tendo import singleton
+from dotenv import load_dotenv
+
+load_dotenv()
 
 me = singleton.SingleInstance()
-# Use absolute path here
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="private/gcp-credentials"
-CREDENTIALS = "private/twitter-credentials"
+CREDENTIALS = os.getenv("TWITTER_CREDENTIALS")
 KEYWORDS_PATH = "data/keywords"
-PROJECT = "vote-safety"
+PROJECT = os.getenv("GCP_PROJECT")
 
 TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y"
 

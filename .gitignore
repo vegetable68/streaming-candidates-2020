@@ -6,3 +6,4 @@ logs/
 *.log
 tmp/
 .vscode
+src/.env
