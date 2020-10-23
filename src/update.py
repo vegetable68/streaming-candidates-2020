@@ -103,7 +103,7 @@ class TwitterUpdates:
 
 
     # Update the retweeted tweet in our db
-    self.update_tweet(data['retweeted_status'])
+    self.update_tweet(data['retweeted_status'], data['created_at'])
 
   def update_hashtags(self, tweet_id, hashtags):
     for hashtag in hashtags:
@@ -153,7 +153,7 @@ class TwitterUpdates:
     ret['followed_cnts'] = 0
     self.write_record(ret, 'users')
 
-  def update_tweet(self, data):
+  def update_tweet(self, data, last_retweeted_date=None):
     ret = {}
     if self.existed(data['id'], 'tweets'): return
     ret['isDeleted'] = False
@@ -167,6 +167,7 @@ class TwitterUpdates:
     ret['user'] = data['user']['id']
     ret['processed'] = False
     ret['retweet_count'] = data['retweet_count']
+    ret['last_retweeted'] = datetime.datetime.strptime(last_retweeted_date, self.TIMEFORMAT) if last_retweeted_date else None
     ret['quote_count'] = data['quote_count']
     ret['coordinates'] = data['coordinates']['coordinates'] if self.existedField('coordinates', data) else None
     ret['place'] = data['place']['id'] if self.existedField('place', data) else None
