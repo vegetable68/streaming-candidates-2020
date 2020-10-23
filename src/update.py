@@ -82,7 +82,6 @@ class TwitterUpdates:
   def update_deletion(self, deleted_id, deletion_user):
     # Note that the tweet being deleted may not necessarily exist
     # in the database yet.
-    ret = {}
     if not(self.existed(deleted_id, 'tweets')): 
       logging.error("{} deleted by {} not found in database.".format(deleted_id, deletion_user))
     else:
@@ -168,6 +167,7 @@ class TwitterUpdates:
     ret['user'] = data['user']['id']
     ret['processed'] = False
     ret['retweet_count'] = data['retweet_count']
+    ret['quote_count'] = data['quote_count']
     ret['coordinates'] = data['coordinates']['coordinates'] if self.existedField('coordinates', data) else None
     ret['place'] = data['place']['id'] if self.existedField('place', data) else None
     if ret['place'] is not None:
