@@ -17,10 +17,10 @@ from tendo import singleton
 
 me = singleton.SingleInstance()
 # Use absolute path here
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="[YOUR SERVICE ACCOUNT JSON FILE]"
-CREDENTIALS = "[YOUR TWITTER DEVELOPER API CREDENTIAL FILE]"
-KEYWORDS_PATH = "[PATH TO KEYWORDS]"
-PROJECT = "[YOUR GOOGLE CLOUD PROJECT]"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="private/gcp-credentials"
+CREDENTIALS = "private/twitter-credentials"
+KEYWORDS_PATH = "data/keywords"
+PROJECT = "vote-safety"
 
 TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y"
 
