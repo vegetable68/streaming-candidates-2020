@@ -41,9 +41,6 @@ class imageSearch:
     fetched_images = []
     cnts = 0
     for cnts, image in enumerate(imagelist):
-      total = 0
-      imageId = image.id
-      imageUrl = image['media_url']
       cmd = "wget -O {}{}.jpg {}".format(TMPDIR, image.id, image['media_url'])
       rt = os.system(cmd)
       size = os.path.getsize('{}{}.jpg'.format(TMPDIR, image.id))
