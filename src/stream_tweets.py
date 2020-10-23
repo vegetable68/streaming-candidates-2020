@@ -47,7 +47,7 @@ class StreamListener(tweepy.StreamListener):
         retweet_user = data['user']
       except:
         logging.error("Missing Fields in retweet " + str(raw_data)) 
-      updator.update_retweet(retweeted_id, data, partyInfo)
+      updator.update_retweet(retweeted_id, data)
     elif 'limit' in data:
       logging.error("Rate Limit Notice: " + str(raw_data))
       # Limit notices
@@ -67,7 +67,7 @@ class StreamListener(tweepy.StreamListener):
       # Standard tweet data  
       # Candidate posts / reply to candidates
       #try:
-      updator.update_tweet(data, partyInfo)
+      updator.update_tweet(data)
       #except: 
       # Unknown data type
       #  logging.error("Unknown message type: " + str(raw_data))
