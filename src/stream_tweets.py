@@ -19,7 +19,7 @@ load_dotenv()
 
 me = singleton.SingleInstance()
 CREDENTIALS = os.getenv("TWITTER_CREDENTIALS")
-KEYWORDS_PATH = "data/keywords"
+KEYWORDS_PATH = os.getenv("KEYWORDS_FILE")
 PROJECT = os.getenv("GCP_PROJECT")
 
 TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y"
