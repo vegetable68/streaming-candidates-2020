@@ -52,7 +52,7 @@ class TwitterUpdates:
        self.buffer = []
        for k in self.inBuffer.keys():
          self.inBuffer[k] = {}
-       logging.info("{} records written.".format(length))
+       logging.info("{} records written at {}".format(length, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
   def existed(self, record_id, kind):
     key = self.client.key(kind, record_id)
