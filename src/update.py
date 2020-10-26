@@ -166,6 +166,7 @@ class TwitterUpdates:
     ret['replyTo_user'] = data['in_reply_to_user_id'] if self.existedField('in_reply_to_user_id', data) else None 
     ret['user'] = data['user']['id']
     ret['processed'] = False
+    self.update_user(ret['user'], 'tweet', data['user'])
     ret['retweet_count'] = data['retweet_count']
     ret['last_retweeted'] = datetime.datetime.strptime(last_retweeted_date, self.TIMEFORMAT) if last_retweeted_date else None
     ret['quote_count'] = data['quote_count']
