@@ -137,7 +137,6 @@ class TwitterUpdates:
   def update_user(self, user_id, action, user_info):
     ret = {}
     if self.existed(user_id, 'users'):
-      self.update_value(user_id, 'users', action, 1, 'inc')
       return
     if user_info:
       ret['_id'] = user_id
