@@ -154,7 +154,17 @@ class TwitterUpdates:
 
   def update_tweet(self, data, last_retweeted_date=None):
     ret = {}
-    if self.existed(data['id'], 'tweets'): return
+    if self.existed(data['id'], 'tweets'):
+      key = self.client.key("tweets", data['id'])
+      tweet = self.client.get(key)
+      tweet['quote_count'] = data['quote_count'] 
+      tweet['retweet_count'] = data['retweet_count']
+      if (last_retweeted_date):
+        tweet['last_retweeted'] = datetime.datetime.strptime(last_retweeted_date, self.TIMEFORMAT)
+      self.client.put(tweet)
+      # Update user in case the user doesn't exist
+      self.update_user(data['user']['id'], 'tweet', data['user'])
+      return
     ret['isDeleted'] = False
     ret['timestamp'] = datetime.datetime.strptime(data['created_at'], self.TIMEFORMAT)
     ret['_id'] = data['id']
