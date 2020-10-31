@@ -18,7 +18,7 @@ class TwitterUpdates:
     self.TIMEFORMAT = "%a %b %d %H:%M:%S %z %Y" 
     self.cnts = 0
     self.buffer = []
-    self.THERESHOLD = 100
+    self.THERESHOLD = 500
     self.inBuffer = defaultdict(dict)
     logging.info("Database {} created.".format(self.client.project))
 
